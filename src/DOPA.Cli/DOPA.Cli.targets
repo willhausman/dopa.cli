@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)opa_darwin_amd64" Condition="$([MSBuild]::IsOsPlatform('OSX'))">
+      <Link>opa_darwin_amd64</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)opa_linux_amd64" Condition="$([MSBuild]::IsOsPlatform('Linux'))">
+      <Link>opa_linux_amd64</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)opa_windows_amd64.exe" Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+      <Link>opa_windows_amd64.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
