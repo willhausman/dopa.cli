@@ -41,18 +41,21 @@
         <OS>linux</OS>
         <Arch>amd64</Arch>
         <FileExtension></FileExtension>
+        <IsOsPlatform>Linux</IsOsPlatform>
       </OpaBinary>
 
       <OpaBinary Include="darwin">
         <OS>darwin</OS>
         <Arch>amd64</Arch>
         <FileExtension></FileExtension>
+        <IsOsPlatform>OSX</IsOsPlatform>
       </OpaBinary>
 
       <OpaBinary Include="windows">
         <OS>windows</OS>
         <Arch>amd64</Arch>
         <FileExtension>.exe</FileExtension>
+        <IsOsPlatform>Windows</IsOsPlatform>
       </OpaBinary>
     </ItemGroup>
 
@@ -63,12 +66,26 @@
       SkipUnchangedFiles="true" />
 
     <ItemGroup>
-      <Content Include="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/opa_%(OpaBinary.OS)_%(OpaBinary.Arch)%(OpaBinary.FileExtension)">
+      <Content
+        Include="$(BaseIntermediateOutputPath)opa/$(OpaVersion)/opa_%(OpaBinary.OS)_%(OpaBinary.Arch)%(OpaBinary.FileExtension)"
+        Condition="$([MSBuild]::IsOsPlatform(%(OpaBinary.IsOsPlatform)))">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <Link>opa_%(OpaBinary.OS)_%(OpaBinary.Arch)%(OpaBinary.FileExtension)</Link>
-        <PackagePath>build/</PackagePath>
+        <Link>opa</Link>
+        <Pack>false</Pack>
       </Content>
     </ItemGroup>
+  </Target>
+
+  <Target
+    Name="ChmodOpa"
+    AfterTargets="DownloadOpa"
+    BeforeTargets="BeforeBuild"
+    Condition="$([MSBuild]::IsOsPlatform('OSX')) or $([MSBuild]::IsOsPlatform('Linux'))">
+    <Exec
+      Command="chmod -R 755 $(BaseIntermediateOutputPath)opa/$(OpaVersion)/"
+      StandardOutputImportance="Low"
+      StandardErrorImportance="Low"
+    />
   </Target>
 
   <ItemGroup>

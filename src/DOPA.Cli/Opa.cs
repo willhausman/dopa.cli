@@ -3,26 +3,12 @@ namespace DOPA.Cli;
 
 public static class Opa
 {
-    private const string windowsFileName = "opa_windows_amd64.exe";
-    private const string macFileName = "opa_darwin_amd64";
-    private const string linuxFileName = "opa_linux_amd64";
     private const int OK = 0;
     private static readonly string opaPath;
 
     static Opa()
     {
-        var fileName = OperatingSystem.IsWindows() ? windowsFileName :
-                OperatingSystem.IsMacOS() ? macFileName :
-                OperatingSystem.IsLinux() ? linuxFileName :
-                throw new Exception("Unsupported OS detected.");
-
-        opaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-        if (!OperatingSystem.IsWindows())
-        {
-            var p = Process.Start("chmod", $"755 {opaPath}");
-            p.WaitForExit();
-        }
+        opaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "opa");
     }
 
     public static BuildCommand Build => new BuildCommand();
