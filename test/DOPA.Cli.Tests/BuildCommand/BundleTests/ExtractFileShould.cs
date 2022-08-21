@@ -40,13 +40,9 @@ public class ExtractFileShould
             .ExecuteAsync();
         using var stream = bundle.ExtractData();
 
-        using var reader = new StreamReader( stream );
+        using var reader = new StreamReader(stream);
         var data = await reader.ReadToEndAsync();
-        var result = JsonSerializer.Deserialize<Dictionary<string, string>>(data);
 
-        // the data json on this policy is just {}. Avoiding string abnormalities by converting to an empty dictionary
-        var expected = new Dictionary<string, string>();
-
-        result.Should().BeEquivalentTo(expected);
+        data.Trim().Should().BeEquivalentTo("{}");
     }
 }

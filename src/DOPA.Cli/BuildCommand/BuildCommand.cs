@@ -4,7 +4,7 @@ public sealed record BuildCommand
 {
     private List<string> Arguments { get; init; }
 
-    public BuildCommand()
+    internal BuildCommand()
     {
         Arguments = new() { "build" };
     }

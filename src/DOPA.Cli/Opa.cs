@@ -11,7 +11,9 @@ public static class Opa
         opaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "opa");
     }
 
-    public static BuildCommand Build => new BuildCommand();
+    public static BuildCommand Build => new();
+
+    public static TestCommand Test => new();
 
     internal static Process Execute(IEnumerable<string> arguments)
     {
@@ -22,7 +24,9 @@ public static class Opa
         if (p.ExitCode != OK)
         {
             var details = p.StandardOutput.ReadToEnd();
-            throw new OpaCliException(opaPath, args, details);
+            var errorDetails = p.StandardError.ReadToEnd();
+            p.Dispose();
+            throw new OpaCliException(opaPath, args, details, errorDetails);
         }
 
         return p;
@@ -37,7 +41,9 @@ public static class Opa
         if (p.ExitCode != OK)
         {
             var details = await p.StandardOutput.ReadToEndAsync();
-            throw new OpaCliException(opaPath, args, details);
+            var errorDetails = await p.StandardError.ReadToEndAsync();
+            p.Dispose();
+            throw new OpaCliException(opaPath, args, details, errorDetails);
         }
 
         return p;
@@ -51,6 +57,7 @@ public static class Opa
             {
                 Arguments = args,
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
             },
         };
