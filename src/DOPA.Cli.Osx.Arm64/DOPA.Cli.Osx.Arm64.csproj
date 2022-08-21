@@ -2,9 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <LangVersion>10</LangVersion>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
     <BuildInParallel>false</BuildInParallel>
   </PropertyGroup>
 
@@ -46,6 +44,7 @@
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="/" />
     <None Include="DOPA.Cli.Osx.Arm64.targets" Pack="true" PackagePath="build/" />
-    <None Include="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/opa" Pack="true" PackagePath="build/opa" />
+    <None Include="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/opa" Pack="true" PackagePath="build/" />
+    <None Include="../../empty" Pack="true" PackagePath="lib/net6.0;lib/net5.0" />
   </ItemGroup>
 </Project>
