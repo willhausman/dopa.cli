@@ -10,7 +10,7 @@
 
   <PropertyGroup>
     <OpaVersion>0.43.0</OpaVersion>
-    <Version>$(OpaVersion).0</Version>
+    <Version>$(OpaVersion).1</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,42 +33,49 @@
 
   <Target Name="DownloadOpa" BeforeTargets="BeforeBuild">
     <PropertyGroup>
-      <OpaReleaseUrl>https://openpolicyagent.org/downloads/v$(OpaVersion)/opa_</OpaReleaseUrl>
+      <OpaReleaseUrl>https://github.com/open-policy-agent/opa/releases/download/v$(OpaVersion)</OpaReleaseUrl>
     </PropertyGroup>
 
     <ItemGroup>
-      <OpaBinary Include="linux">
-        <OS>linux</OS>
-        <Arch>amd64</Arch>
-        <FileExtension></FileExtension>
-        <IsOsPlatform>Linux</IsOsPlatform>
+      <OpaBinary Include="linux-64">
+        <File>opa_linux_amd64</File>
+        <OS>Linux</OS>
+        <Arch>X64</Arch>
+      </OpaBinary>
+      <OpaBinary Include="linux-arm">
+        <File>opa_linux_arm64_static</File>
+        <OS>Linux</OS>
+        <Arch>Arm64</Arch>
       </OpaBinary>
 
-      <OpaBinary Include="darwin">
-        <OS>darwin</OS>
-        <Arch>amd64</Arch>
-        <FileExtension></FileExtension>
-        <IsOsPlatform>OSX</IsOsPlatform>
+      <OpaBinary Include="darwin-64">
+        <File>opa_darwin_amd64</File>
+        <OS>OSX</OS>
+        <Arch>X64</Arch>
+      </OpaBinary>
+      <OpaBinary Include="darwin-arm">
+        <File>opa_darwin_arm64_static</File>
+        <OS>OSX</OS>
+        <Arch>Arm64</Arch>
       </OpaBinary>
 
-      <OpaBinary Include="windows">
-        <OS>windows</OS>
-        <Arch>amd64</Arch>
-        <FileExtension>.exe</FileExtension>
-        <IsOsPlatform>Windows</IsOsPlatform>
+      <OpaBinary Include="windows-64">
+        <File>opa_windows_amd64.exe</File>
+        <OS>Windows</OS>
+        <Arch>X64</Arch>
       </OpaBinary>
     </ItemGroup>
 
     <DownloadFile
-      Condition="!Exists('$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/opa_%(OpaBinary.OS)_%(OpaBinary.Arch)%(OpaBinary.FileExtension)')"
-      SourceUrl="$(OpaReleaseUrl)%(OpaBinary.OS)_%(OpaBinary.Arch)%(OpaBinary.FileExtension)"
+      Condition="!Exists('$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/%(OpaBinary.File)')"
+      SourceUrl="$(OpaReleaseUrl)/%(OpaBinary.File)"
       DestinationFolder="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)"
       SkipUnchangedFiles="true" />
 
     <ItemGroup>
       <Content
-        Include="$(BaseIntermediateOutputPath)opa/$(OpaVersion)/opa_%(OpaBinary.OS)_%(OpaBinary.Arch)%(OpaBinary.FileExtension)"
-        Condition="$([MSBuild]::IsOsPlatform(%(OpaBinary.IsOsPlatform)))">
+        Include="$(BaseIntermediateOutputPath)opa/$(OpaVersion)/%(OpaBinary.File)"
+        Condition="$([MSBuild]::IsOsPlatform(%(OpaBinary.OS))) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == '%(OpaBinary.Arch)'">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <Link>opa</Link>
         <Pack>false</Pack>

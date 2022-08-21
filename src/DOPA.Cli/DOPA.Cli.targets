@@ -7,16 +7,31 @@
       StandardErrorImportance="Low"
     />
   </Target>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)opa_darwin_amd64" Condition="$([MSBuild]::IsOsPlatform('OSX'))">
+
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform('OSX'))">
+    <None Include="$(MSBuildThisFileDirectory)opa_darwin_amd64" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
       <Link>opa</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)opa_linux_amd64" Condition="$([MSBuild]::IsOsPlatform('Linux'))">
+    <None Include="$(MSBuildThisFileDirectory)opa_darwin_arm64_static" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
       <Link>opa</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)opa_windows_amd64.exe" Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform('Linux'))">
+    <None Include="$(MSBuildThisFileDirectory)opa_linux_amd64" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+      <Link>opa</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)opa_linux_arm64_static" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
+      <Link>opa</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+    <None Include="$(MSBuildThisFileDirectory)opa_windows_amd64.exe" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
       <Link>opa</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
