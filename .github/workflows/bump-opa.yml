@@ -21,36 +21,33 @@ jobs:
       - uses: actions/checkout@v3 # TODO: replace this with a simple curl for the Directory.Build.props when things merged
       - name: Extract versions
         id: extract
-        env:
-          opa_version: ${{ steps.opa.outputs.release }}
         run: |
           echo "::set-output name=dopa_release::$(cat Directory.Build.props | grep -oP '>(.*)<\/OpaVersion>' | grep -oP '(\d.*\d)')"
-          echo "::set-output name=opa_release::$(echo $OPA_VERSION | cut -d 'v' -f 2)"
-          echo $OPA_VERSION ${{ steps.extract.outputs.dopa_release }} ${{ steps.extract.outputs.opa_release }}
+          echo "::set-output name=opa_release::$(echo ${{ steps.opa.outputs.release }} | cut -d 'v' -f 2)"
 
 
-  # update:
-  #   needs: versions
-  #   if: ${{ needs.versions.outputs.dopa_release != needs.versions.outputs.opa_release }}
-  #   name: Update DOPA
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Setup .NET
-  #       uses: actions/setup-dotnet@v1
-  #       with:
-  #         dotnet-version: 6.0.x
-  #     - name: Update build props
-  #       env:
-  #         version: ${{ needs.versions.outputs.opa_release }}
-  #       run: |
-  #         sed "s/>.*<\/Opa/>$VERSION<\/Opa/" Directory.Build.props > out && mv out Directory.Build.props
-  #         sed 's/<Revision>.*<\/Revision>/<Revision>0<\/Revision>/' Directory.Build.props > out && mv out Directory.Build.props
-  #     - name: Pack targets
-  #       run: dotnet pack targets
-  #     - name: Create Pull Request
-  #       uses: peter-evans/create-pull-request@v4
-  #         with:
-  #           reviewers: willhausman
+  update:
+    needs: versions
+    if: ${{ needs.versions.outputs.dopa_release != needs.versions.outputs.opa_release }}
+    name: Update DOPA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Update build props
+        env:
+          version: ${{ needs.versions.outputs.opa_release }}
+        run: |
+          sed "s/>.*<\/Opa/>${{ needs.versions.outputs.opa_release }}<\/Opa/" Directory.Build.props > out && mv out Directory.Build.props
+          sed 's/<Revision>.*<\/Revision>/<Revision>0<\/Revision>/' Directory.Build.props > out && mv out Directory.Build.props
+      - name: Pack targets
+        run: dotnet pack targets
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v4
+      #     with:
+      #       reviewers: willhausman
 
 
