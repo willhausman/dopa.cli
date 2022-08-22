@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "::set-output name=dopa_release::$(cat Directory.Build.props | grep -oP '>(.*)<\/OpaVersion>' | grep -oP '(\d.*\d)')"
           echo "::set-output name=opa_release::$(echo $OPA_VERSION | cut -d 'v' -f 2)"
-          echo ${{ steps.extract.outputs.dopa_release }} ${{ steps.extract.outputs.opa_release }}
+          echo $OPA_VERSION ${{ steps.extract.outputs.dopa_release }} ${{ steps.extract.outputs.opa_release }}
 
 
   # update:
