@@ -22,6 +22,8 @@ jobs:
       - name: Extract versions
         id: extract
         run: |
+          ls
+          pwd
           echo "::set-output name=dopa_release::$(cat Directory.Build.props | grep -oP '>(.*)<\/OpaVersion>' | grep -oP '(\d.*\d)')"
           echo "::set-output name=opa_release::$(echo ${{ steps.opa.outputs.release }} | cut -d 'v' -f 2)"
 
