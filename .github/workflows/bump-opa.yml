@@ -1,0 +1,43 @@
+name: Bump OPA
+on:
+  push:
+  schedule:
+    - cron: '0 0 * * *' # run at 00:00 UTC
+
+jobs:
+  versions:
+    name: Detect versions
+    runs-on: ubuntu-latest
+    outputs:
+      dopa_release: ${{ steps.dopa.outputs.release }}
+      release: ${{ steps.opa.outputs.release }}
+    steps:
+      - name: Get Latest OPA
+        id: opa
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: open-policy-agent/opa
+          excludes: prerelease, draft
+      - uses: actions/checkout@v3 # TODO: replace this with a simple curl for the Directory.build.props when things merged
+      - name: Extract current version
+        id: dopa
+        run: echo "::set-output name=release::v$(cat Directory.build.props | grep -oP '>(.*)<\/OpaVersion>' | grep -oP '(\d.*\d)')"
+
+  update:
+    needs: versions
+    if: ${{ needs.versions.outputs.dopa_release != needs.versions.outputs.release }}
+    name: Update DOPA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Update build props
+        run: |
+          sed 's/>.*<\/Opa/>0.42.0<\/Opa/' Directory.build.props > out && mv out Directory.build.props
+          sed 's/<Revision>.*<\/Revision>/<Revision>0<\/Revision>/' Directory.build.props > out && mv out Directory.build.props
+      - name: Pack targets
+        run: dotnet pack targets
+

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <OpaVersion>0.43.0</OpaVersion>
     <Version>$(OpaVersion)</Version>
   </PropertyGroup>
 
