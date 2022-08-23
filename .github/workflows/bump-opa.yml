@@ -48,7 +48,5 @@ jobs:
         run: dotnet nuget push "artifacts/*" -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
       - name: Create Pull Request For DOPA.Cli
         uses: peter-evans/create-pull-request@v4
-          with:
-            reviewers: willhausman
-
-
+        with:
+          reviewers: willhausman
