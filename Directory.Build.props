@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <OpaVersion>0.42.0</OpaVersion>
-    <Revision>1</Revision>
+    <OpaVersion>0.43.0</OpaVersion>
+    <Revision>0</Revision>
   </PropertyGroup>
 </Project>
