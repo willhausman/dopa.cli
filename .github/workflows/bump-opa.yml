@@ -1,8 +1,8 @@
 name: Bump OPA
 on:
-  push:
   schedule:
     - cron: '0 0 * * *' # run at 00:00 UTC
+  workflow_dispatch:
 
 jobs:
   versions:
@@ -22,11 +22,8 @@ jobs:
       - name: Extract versions
         id: extract
         run: |
-          ls
-          pwd
           echo "::set-output name=dopa_release::$(cat Directory.Build.props | grep -oP '>(.*)<\/OpaVersion>' | grep -oP '(\d.*\d)')"
           echo "::set-output name=opa_release::$(echo ${{ steps.opa.outputs.release }} | cut -d 'v' -f 2)"
-
 
   update:
     needs: versions
@@ -36,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
       - name: Update build props
@@ -46,10 +43,12 @@ jobs:
           sed "s/>.*<\/Opa/>${{ needs.versions.outputs.opa_release }}<\/Opa/" Directory.Build.props > out && mv out Directory.Build.props
           sed 's/<Revision>.*<\/Revision>/<Revision>0<\/Revision>/' Directory.Build.props > out && mv out Directory.Build.props
       - name: Pack targets
-        run: dotnet pack targets
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v4
-      #     with:
-      #       reviewers: willhausman
+        run: dotnet pack -c release targets -o artifacts
+      - name: Publish targets
+        run: dotnet nuget push "artifacts/*" -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+      - name: Create Pull Request For DOPA.Cli
+        uses: peter-evans/create-pull-request@v4
+          with:
+            reviewers: willhausman
 
 

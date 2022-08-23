@@ -1,0 +1,53 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: '30 1 * * *' # run at 01:30 UTC
+
+jobs:
+  build:
+    name: Test DOPA.Cli
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        config: [release] # [debug,release]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build -c ${{ matrix.config }} --no-restore
+    - name: Test
+      run: dotnet test -c ${{ matrix.config }} --no-build --verbosity normal
+    - name: Pack
+      if: matrix.config == 'release' && matrix.os == 'ubuntu-latest'
+      run: dotnet pack -c release -o artifacts
+    - uses: actions/upload-artifact@v3
+      with:
+        name: artifacts
+        path: artifacts/
+
+  publish:
+    name: Publish DOPA.Cli
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pull packed artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: artifacts
+    - name: Publish artifacts
+      run: dotnet nuget push "artifacts/*" -k ${{ secrets.NUGET_API_KEY }}
