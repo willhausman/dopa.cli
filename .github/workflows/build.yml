@@ -50,4 +50,15 @@ jobs:
       with:
         name: artifacts
     - name: Publish artifacts
-      run: dotnet nuget push "artifacts/*" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+      id: publish_artifacts
+      continue-on-error: true
+      run: |
+        echo "OpaVersion=$(cat Directory.Build.props | grep -oP '>(.*)<\/OpaVersion>' | grep -oP '(\d.*\d)')" >> $GITHUB_ENV
+        echo "Revision=$(cat Directory.Build.props | grep -oP '>(.*)<\/Revision>' | grep -oP '(\d.*\d)')" >> $GITHUB_ENV
+        dotnet nuget push "artifacts/*" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+    - uses: actions/checkout@v3
+      if: steps.publish_artifacts.outcome == 'success'
+    - name: Tag commit
+      run: |
+        git tag -a v$OpaVersion.$Revision -m "Created v$OpaVersion.$Revision"
+        git push origin v$OpaVersion.$Revision
