@@ -1,0 +1,54 @@
+name: Bump OPA
+on:
+  schedule:
+    - cron: '0 0 * * *' # run at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  versions:
+    name: Detect versions
+    runs-on: ubuntu-latest
+    outputs:
+      dopa_release: ${{ steps.extract.outputs.dopa_release }}
+      opa_release: ${{ steps.extract.outputs.opa_release }}
+    steps:
+      - name: Get Latest OPA
+        id: opa
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: open-policy-agent/opa
+          excludes: prerelease, draft
+      - uses: actions/checkout@v3 # TODO: replace this with a simple curl for the Directory.Build.props when things merged
+      - name: Extract versions
+        id: extract
+        run: |
+          echo "::set-output name=dopa_release::$(cat Directory.Build.props | grep -oP '>(.*)<\/OpaVersion>' | grep -oP '(\d.*\d)')"
+          echo "::set-output name=opa_release::$(echo ${{ steps.opa.outputs.release }} | cut -d 'v' -f 2)"
+
+  update:
+    needs: versions
+    if: ${{ needs.versions.outputs.dopa_release != needs.versions.outputs.opa_release }}
+    name: Update DOPA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+      - name: Update build props
+        env:
+          version: ${{ needs.versions.outputs.opa_release }}
+        run: |
+          sed "s/>.*<\/OpaVersion/>${{ needs.versions.outputs.opa_release }}<\/OpaVersion/" Directory.Build.props > out && mv out Directory.Build.props
+          sed "s/>.*<\/Revision>/>0<\/Revision>/" Directory.Build.props > out && mv out Directory.Build.props
+          sed "s/>.*<\/ReleaseNotes>/>Bump OPA to v${{ needs.versions.outputs.opa_release }}.<\/ReleaseNotes>/"" Directory.Build.props > out && mv out Directory.Build.props
+      - name: Create Pull Request For DOPA.Cli
+        uses: peter-evans/create-pull-request@v4
+        with:
+          reviewers: willhausman
+          commit-message: Bump OPA to v${{ needs.versions.outputs.opa_release }}
+          branch: opa/v${{ needs.versions.outputs.opa_release }}
+          title: Bump OPA to v${{ needs.versions.outputs.opa_release }}
+          body:
+          delete-branch: true
