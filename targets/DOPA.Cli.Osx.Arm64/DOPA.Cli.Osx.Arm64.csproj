@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>$(OpaVersion)</Version>
+    <Version>$(OpaVersion)-alpha1</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -40,8 +40,8 @@
 
   <ItemGroup>
     <None Include="../README.md" Pack="true" PackagePath="/" />
-    <None Include="DOPA.Cli.Osx.Arm64.targets" Pack="true" PackagePath="build/" />
-    <None Include="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/opa" Pack="true" PackagePath="build/" />
+    <None Include="DOPA.Cli.Osx.Arm64.targets" Pack="true" PackagePath="build;buildTransitive" />
+    <None Include="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/opa" Pack="true" PackagePath="build;buildTransitive" />
     <None Include="../empty.file" Pack="true" PackagePath="lib/net6.0;lib/net5.0" />
   </ItemGroup>
 </Project>

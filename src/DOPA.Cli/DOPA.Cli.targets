@@ -15,7 +15,7 @@
       Condition="$([MSBuild]::IsOsPlatform('Linux')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'" />
     <PackageReference
       Include="DOPA.Cli.Linux.X64"
-      Version="0.43.0"
+      Version="0.43.0-alpha1"
       Condition="$([MSBuild]::IsOsPlatform('Linux')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'" />
     <PackageReference
       Include="DOPA.Cli.Windows.X64"
