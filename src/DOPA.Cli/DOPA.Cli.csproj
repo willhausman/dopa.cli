@@ -30,74 +30,9 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
-  <Target Name="DownloadOpa" BeforeTargets="BeforeBuild">
-    <PropertyGroup>
-      <OpaReleaseUrl>https://github.com/open-policy-agent/opa/releases/download/v$(OpaVersion)</OpaReleaseUrl>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <OpaBinary Include="linux-64">
-        <File>opa_linux_amd64</File>
-        <OS>Linux</OS>
-        <Arch>X64</Arch>
-      </OpaBinary>
-      <OpaBinary Include="linux-arm">
-        <File>opa_linux_arm64_static</File>
-        <OS>Linux</OS>
-        <Arch>Arm64</Arch>
-      </OpaBinary>
-
-      <OpaBinary Include="darwin-64">
-        <File>opa_darwin_amd64</File>
-        <OS>OSX</OS>
-        <Arch>X64</Arch>
-      </OpaBinary>
-      <OpaBinary Include="darwin-arm">
-        <File>opa_darwin_arm64_static</File>
-        <OS>OSX</OS>
-        <Arch>Arm64</Arch>
-      </OpaBinary>
-
-      <OpaBinary Include="windows-64">
-        <File>opa_windows_amd64.exe</File>
-        <OS>Windows</OS>
-        <Arch>X64</Arch>
-      </OpaBinary>
-    </ItemGroup>
-
-    <DownloadFile
-      Condition="!Exists('$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/%(OpaBinary.File)')"
-      SourceUrl="$(OpaReleaseUrl)/%(OpaBinary.File)"
-      DestinationFolder="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)"
-      SkipUnchangedFiles="true" />
-
-    <ItemGroup>
-      <Content
-        Include="$(BaseIntermediateOutputPath)opa/$(OpaVersion)/%(OpaBinary.File)"
-        Condition="$([MSBuild]::IsOsPlatform(%(OpaBinary.OS))) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == '%(OpaBinary.Arch)'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <Link>opa</Link>
-        <Pack>false</Pack>
-      </Content>
-    </ItemGroup>
-  </Target>
-
-  <Target
-    Name="ChmodOpa"
-    AfterTargets="DownloadOpa"
-    BeforeTargets="BeforeBuild"
-    Condition="$([MSBuild]::IsOsPlatform('OSX')) or $([MSBuild]::IsOsPlatform('Linux'))">
-    <Exec
-      Command="chmod -R 755 $(BaseIntermediateOutputPath)opa/$(OpaVersion)/"
-      StandardOutputImportance="Low"
-      StandardErrorImportance="Low"
-    />
-  </Target>
-
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="/" />
     <None Include="DOPA.Cli.targets" Pack="true" PackagePath="build/" />
-    <None Include="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/*" Pack="true" PackagePath="build/" />
   </ItemGroup>
 
   <ItemGroup>

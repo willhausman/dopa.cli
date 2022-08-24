@@ -30,5 +30,26 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DOPA.Cli\DOPA.Cli.csproj" />
+
+    <PackageReference
+      Include="DOPA.Cli.Osx.Arm64"
+      Version="$(OpaVersion)"
+      Condition="$([MSBuild]::IsOsPlatform('OSX')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'" />
+    <PackageReference
+      Include="DOPA.Cli.Osx.X64"
+      Version="$(OpaVersion)"
+      Condition="$([MSBuild]::IsOsPlatform('OSX')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'" />
+    <PackageReference
+      Include="DOPA.Cli.Linux.Arm64"
+      Version="$(OpaVersion)"
+      Condition="$([MSBuild]::IsOsPlatform('Linux')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'" />
+    <PackageReference
+      Include="DOPA.Cli.Linux.X64"
+      Version="$(OpaVersion)"
+      Condition="$([MSBuild]::IsOsPlatform('Linux')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'" />
+    <PackageReference
+      Include="DOPA.Cli.Windows.X64"
+      Version="$(OpaVersion)"
+      Condition="$([MSBuild]::IsOsPlatform('Windows')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'" />
   </ItemGroup>
 </Project>

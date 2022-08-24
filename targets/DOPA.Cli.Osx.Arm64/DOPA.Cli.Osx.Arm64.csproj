@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net5.0</TargetFrameworks>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <BuildInParallel>false</BuildInParallel>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>$(OpaVersion)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyName>DOPA.Cli.Osx.Arm64</AssemblyName>
+    <PackageId>DOPA.Cli.Osx.Arm64</PackageId>
+    <PackageReleaseNotes>OPA $(OpaVersion) release.</PackageReleaseNotes>
+    <Authors>Will Hausman</Authors>
+    <Owners>Will Hausman</Owners>
+    <IncludeSymbols>false</IncludeSymbols>
+    <RepositoryUrl>https://github.com/willhausman/dopa.cli</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <Description>A .NET wrapper for the Open Policy Agent.</Description>
+    <PackageTags>webassembly, .net, wasm, opa, open-policy-agent</PackageTags>
+    <Title>DOPA.Cli.Osx.Arm64</Title>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <Target Name="DownloadOpa" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <OpaFileName>opa_darwin_arm64_static</OpaFileName>
+      <OpaReleaseUrl>https://github.com/open-policy-agent/opa/releases/download/v$(OpaVersion)/$(OpaFileName)</OpaReleaseUrl>
+    </PropertyGroup>
+
+    <DownloadFile
+      SourceUrl="$(OpaReleaseUrl)"
+      DestinationFileName="opa"
+      DestinationFolder="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)" />
+  </Target>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+    <None Include="DOPA.Cli.Osx.Arm64.targets" Pack="true" PackagePath="build/" />
+    <None Include="$(BaseIntermediateOutputPath)/opa/$(OpaVersion)/opa" Pack="true" PackagePath="build/" />
+    <None Include="../empty.file" Pack="true" PackagePath="lib/net6.0;lib/net5.0" />
+  </ItemGroup>
+</Project>

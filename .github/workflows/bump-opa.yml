@@ -1,7 +1,7 @@
 name: Bump OPA
 on:
-  schedule:
-    - cron: '0 0 * * *' # run at 00:00 UTC
+  # schedule:
+  #   - cron: '0 0 * * *' # run at 00:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -43,6 +43,10 @@ jobs:
           sed "s/>.*<\/OpaVersion/>${{ needs.versions.outputs.opa_release }}<\/OpaVersion/" Directory.Build.props > out && mv out Directory.Build.props
           sed "s/>.*<\/Revision>/>0<\/Revision>/" Directory.Build.props > out && mv out Directory.Build.props
           sed "s/>.*<\/ReleaseNotes>/>Bump OPA to v${{ needs.versions.outputs.opa_release }}.<\/ReleaseNotes>/"" Directory.Build.props > out && mv out Directory.Build.props
+      - name: Pack targets
+        run: dotnet pack -c release targets -o artifacts
+      - name: Publish targets
+        run: dotnet nuget push "artifacts/*" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
       - name: Create Pull Request For DOPA.Cli
         uses: peter-evans/create-pull-request@v4
         with:

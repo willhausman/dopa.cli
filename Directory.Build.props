@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <OpaVersion>0.43.0</OpaVersion>
-    <Revision>1</Revision>
-    <ReleaseNotes>Add Arm64 binaries.</ReleaseNotes>
+    <Revision>3-alpha</Revision>
+    <ReleaseNotes>Consume smaller, individual packages for architecture.</ReleaseNotes>
   </PropertyGroup>
 </Project>
