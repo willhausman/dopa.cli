@@ -38,6 +38,15 @@ using Bundle bundle = await Opa.Build
 using Stream wasm = bundle.ExtractWebAssemblyModule();
 ```
 
+#### Test
+
+The [test](https://www.openpolicyagent.org/docs/latest/cli/#opa-test) command is supported with files. `OpaTestsFailedException` is thrown if any tests fail. The exception message contains the details about which test failed.
+
+```csharp
+var results = Opa.Test.Files("policies/api.rego").Execute();
+results.Trim().Should().BeEquivalentTo("PASS: 4/4");
+```
+
 ## Versioning
 
 DOPA.Cli uses a `Major.Minor.Patch.Revision` versioning scheme, where `Major.Minor.Patch` match the corresponding `Major.Minor.Patch` of the `opa` binary used to run commands. e.g. `DOPA.Cli@0.43.0.12` equates to revision 12 of `opa@0.43.0`.

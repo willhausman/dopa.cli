@@ -53,7 +53,7 @@ test_variable {
 }");
         Func<Task> act = () => Opa.Test.Files(testRegoPath).ExecuteAsync();
 
-        await act.Should().ThrowAsync<OpaTestsFailedException>();
+        await act.Should().ThrowAsync<OpaTestsFailedException>().WithMessage("*test.test_variable: FAIL*");
     }
 
     public void Dispose() => File.Delete(testRegoPath);
