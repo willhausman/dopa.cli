@@ -48,7 +48,6 @@ jobs:
         with:
           token: ${{ secrets.BOT_TOKEN }}
           push-to-fork: willh-bot/dopa.cli
-          reviewers: willhausman
           commit-message: Bump OPA to v${{ needs.versions.outputs.opa_release }}
           branch: opa/v${{ needs.versions.outputs.opa_release }}
           title: Bump OPA to v${{ needs.versions.outputs.opa_release }}
