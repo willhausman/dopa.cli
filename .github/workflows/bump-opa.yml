@@ -28,7 +28,7 @@ jobs:
   update:
     needs: versions
     if: ${{ needs.versions.outputs.dopa_release != needs.versions.outputs.opa_release }}
-    name: Update DOPA
+    name: Update DOPA.Cli
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -46,6 +46,8 @@ jobs:
       - name: Create Pull Request For DOPA.Cli
         uses: peter-evans/create-pull-request@v4
         with:
+          token: ${{ secrets.BOT_TOKEN }}
+          push-to-fork: willh-bot/dopa.cli
           reviewers: willhausman
           commit-message: Bump OPA to v${{ needs.versions.outputs.opa_release }}
           branch: opa/v${{ needs.versions.outputs.opa_release }}
