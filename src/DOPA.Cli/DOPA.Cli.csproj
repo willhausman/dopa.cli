@@ -105,6 +105,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SharpZipLib" Version="1.4.0" />
+    <PackageReference Include="SharpZipLib" Version="1.4.1" />
   </ItemGroup>
 </Project>
