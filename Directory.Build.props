@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <OpaVersion>0.64.1</OpaVersion>
+    <OpaVersion>0.65.0</OpaVersion>
     <Revision>0</Revision>
-    <ReleaseNotes>Bump OPA to v0.64.1.</ReleaseNotes>
+    <ReleaseNotes>Bump OPA to v0.65.0.</ReleaseNotes>
   </PropertyGroup>
 </Project>
